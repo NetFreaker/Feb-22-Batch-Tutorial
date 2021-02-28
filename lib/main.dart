@@ -1,3 +1,7 @@
+import 'package:demo2/favorites.dart';
+import 'package:demo2/homescreen.dart';
+import 'package:demo2/profile.dart';
+import 'package:demo2/search.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -8,59 +12,94 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        home: MainScreen());
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+class MainScreen extends StatefulWidget {
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MainScreenState extends State<MainScreen> {
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+ int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+
+    Widget screens(int index) {
+      if(index == 0) {
+        return HomeScreen();
+      }
+      if(index == 1) {
+        return Search();
+      }
+      if(index == 2) {
+        return Favorites();
+      }
+      if(index == 3) {
+        return Profile();
+      }
+      return HomeScreen();
+    }
+
+    void onIconsTapped(int index){
+      setState(() {
+        currentIndex = index;   
+        print(currentIndex);     
+      });
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
+      drawer: Drawer(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.orange
+              ),
+              margin: EdgeInsets.all(10.0),
+              padding: EdgeInsets.symmetric(
+                vertical: 20.0, horizontal: 30.0
+              ),
+              child: Text('Header', style: TextStyle(
+                fontSize: 24.0
+              ),)
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+            CustomDrawerTiles(Icons.notification_important, 'Notifications'),
+            CustomDrawerTiles(Icons.settings, 'Settings')
+          ]
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
+      body: screens(currentIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentIndex,
+          onTap: onIconsTapped,
+          unselectedItemColor: Colors.blue,
+          selectedItemColor: Colors.black,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home'
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: 'Search'
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Favorite'
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile'
+            )
+          ],
+        ),
     );
   }
 }
+
+
